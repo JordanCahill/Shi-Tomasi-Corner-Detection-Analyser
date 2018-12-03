@@ -1,0 +1,1 @@
+Designed to analyze performance of OpenCV's ST Corner Detection on an image with varying resolution. Support for JPEG and PNG images. Test images included in "images" folder.
