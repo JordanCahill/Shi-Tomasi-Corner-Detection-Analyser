@@ -1,6 +1,7 @@
 import st_corner_detector as st
 import cv2
 import os
+from matplotlib import pyplot as plt
 
 # TODO: Add documentation
 
@@ -13,6 +14,20 @@ def load_images(folder):
             img_in = cv2.imread(os.path.join(folder, filename))
             img_array.append((filename, img_in))
     return img_array
+
+
+def plot_performance_v_res(list_in):
+    new_list = []
+    for a, b, c in list_in:
+        new_list.append((str(c), b))
+    plt.scatter(*zip(*new_list))  # zip(*list) separates the tuples into listd=s
+    plt.xticks(rotation=45)
+    plt.xlabel("Resolution")
+    plt.ylabel("Corners Detected")
+    for a, b in (new_list):
+        plt.annotate(b, (a, b), xytext=(6, 6), textcoords='offset pixels')
+    plt.show()
+    #plt.savefig('plot.png', bbox_inches='tight')
 
 
 def get_key(arr):
@@ -29,8 +44,8 @@ if __name__ == "__main__":
 
     highest_num_corners = results[0][1]
 
-    # TODO: Plot results
     for name, num_corners, res in results:
-        percentage = round((num_corners/highest_num_corners)*100, 2)
+        percentage = round((num_corners / highest_num_corners) * 100, 2)
         print("Image: '{0}' | Corners detected: {1} | {2}% of full quality image | Resolution: {3}"
               .format(name, num_corners, percentage, res))
+    plot_performance_v_res(results)
