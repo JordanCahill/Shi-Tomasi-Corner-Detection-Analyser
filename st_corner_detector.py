@@ -14,12 +14,7 @@ def get_num_corners(img):
         return 0
 
 
-def detect_img_corners(img, **kwargs):
-
-    num_corners = 100  # Default
-    for key in kwargs:
-        if (key == 'corners') and (kwargs[key] == 'yes'):
-            num_corners = kwargs[key]
+def detect_img_corners(img, num_corners=100):
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

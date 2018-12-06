@@ -23,36 +23,30 @@ def resize_10(original_img):
     return img_array
 
 
-def plot_res_v_corners_detected(list_in, **kwargs):
+def plot_res_v_corners_detected(list_in, save=False):
     """
     Plots the resolution of a list of images vs the number of corners detected by ST
 
-    :param list_in:
-    :param kwargs:
-            save: if set to true, the image is saved to the root folder as 'plot.png'
+    :param list_in: Array of tuples in the form (resolution, corners detected),
+    :param save:
     """
 
-    new_list = []
-    for corners, res in list_in:
-        new_list.append((str(res), corners))
+    data = []
+    for res, corners in list_in:
+        data.append((str(res), corners))
 
-    plt.scatter(*zip(*new_list))  # zip(*list) separates the tuples into list
+    plt.scatter(*zip(*data))  # zip(*list) separates the tuples into list
     plt.xticks(rotation=45)
     plt.xlabel("Resolution")
     plt.ylabel("Corners Detected")
 
-    for res, corners in new_list:
+    for res, corners in data:
         plt.annotate(corners, (res, corners), xytext=(6, 6), textcoords='offset pixels')
 
-    for key in kwargs:
-        if (key == 'save') and (kwargs[key] is True):
-            plt.savefig('plot.png', bbox_inches='tight')
+    if save is True:
+        plt.savefig('plot.png', bbox_inches='tight')
 
     plt.show()
-
-
-def get_key(arr):
-    return arr[1]
 
 
 def analyse_corners(images):
@@ -60,7 +54,7 @@ def analyse_corners(images):
     Takes an array of images and applies ST corner detection to each, prints the performance results
 
     :param images: array of images (at different resolutions)
-    :return: array of tuples (a,b) where a is number of corners detected and b is the image resolution, array sorted by
+    :return: array of tuples (a,b) where a is image resolution and b is the number of corners detected, array sorted by
     resolution in descending order
     """
 
@@ -68,16 +62,16 @@ def analyse_corners(images):
     results = []
     for i in images:
         resolution = (len(i[0]), len(i))
-        results.append((st.get_num_corners(i), resolution))
+        results.append((resolution, st.get_num_corners(i)))
 
     # TODO: Add option for Harris corner detection
 
     # Sort array by image resolution in descending order
-    results.sort(key=get_key, reverse=True)
+    results.sort(reverse=True)
 
     # Calculate and print the performance of the corner detection at each resolution
-    highest_num_corners = results[0][0]
-    for num_corners, res in results:
+    highest_num_corners = results[0][1]
+    for res, num_corners in results:
         percentage = round((num_corners / highest_num_corners) * 100, 2)
         print("Corners detected: {0} | {1}% of full quality image | Resolution: {2}"
               .format(num_corners, percentage, res))
